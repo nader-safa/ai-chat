@@ -1,15 +1,11 @@
 import express from 'express'
 import type { Request, Response } from 'express'
 import dotenv from 'dotenv'
-import OpenAI from 'openai'
 import z from 'zod'
+import { chatService } from './services/chat.service'
 import { conversationRepository } from './repositories/conversation.repository'
 
 dotenv.config()
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
 
 const app = express()
 
@@ -43,17 +39,11 @@ app.post('/api/v1/chat', async (req: Request, res: Response) => {
   try {
     const { prompt, conversationId } = req.body
 
-    const response = await openai.responses.create({
-      model: 'gpt-4o-mini',
-      input: prompt,
-      temperature: 0.2,
-      max_output_tokens: 50,
-      previous_response_id: conversationRepository.get(conversationId),
-    })
+    const response = await chatService.sendMessage(prompt, conversationId)
 
     conversationRepository.set(conversationId, response.id)
 
-    res.json({ message: response.output_text })
+    res.json({ message: response.message })
   } catch (error) {
     res.status(500).json({ error: 'Failed to generate a response' })
   }
