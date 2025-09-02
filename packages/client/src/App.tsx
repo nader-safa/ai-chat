@@ -9,7 +9,7 @@ function App() {
       .then((data) => setMessage(data.message))
   }, [])
 
-  return <div>{message}</div>
+  return <div className='text-red-500 font-bold'>{message}</div>
 }
 
 export default App
