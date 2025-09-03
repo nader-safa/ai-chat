@@ -62,9 +62,22 @@ services:
       - NGINX_HOST=aichat.dishyy.com
       - NGINX_PORT=80
 
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - webroot:/var/www/html
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path /var/www/html --email nader.safa.dev@gmail.com --domains aichat.dishyy.com --rsa-key-size 4096 --agree-tos --non-interactive --staging
+
 networks:
   ai-chat-network:
     driver: bridge
 volumes:
   ai-chat-postgres-data:
   webroot:
+  certbot-etc:
+  certbot-var:
