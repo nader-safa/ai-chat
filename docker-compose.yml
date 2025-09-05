@@ -61,7 +61,6 @@ services:
       # - web
       - api
 
-
   certbot:
     image: certbot/certbot
     container_name: certbot
