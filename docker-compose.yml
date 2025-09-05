@@ -71,7 +71,7 @@ services:
       - webroot:/var/www/html
     depends_on:
       - nginx
-    command: certonly --webroot --webroot-path=/var/www/html --email nader.safa.dev@gmail.com --non-interactive --keep-until-expiring -d aichat.dishyy.com
+    command: certonly --webroot --webroot-path=/var/www/html --email nader.safa.dev@gmail.com --agree-tos --non-interactive --keep-until-expiring -d aichat.dishyy.com
 
 networks:
   ai-chat-network:
