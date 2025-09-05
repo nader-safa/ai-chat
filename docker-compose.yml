@@ -28,6 +28,8 @@ services:
       PORT: 3000
     networks:
       - ai-chat-network
+    volumes:
+      - ./logs:/var/log 
 
   # postgres:
   #   image: postgres:17-alpine
@@ -82,3 +84,4 @@ volumes:
   webroot:
   certbot-etc:
   certbot-var:
+  logs:
