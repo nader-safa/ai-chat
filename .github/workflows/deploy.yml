@@ -5,17 +5,19 @@ on:
     branches:
       - master
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to VPS
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Server
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_PASSWORD }}
+          host: ${{ secrets.VPS_HOST }}           # The hostname or IP address of your server
+          username: ${{ secrets.VPS_USERNAME }}   # Your SSH username (e.g., root)
+          password: ${{ secrets.VPS_PASSWORD }}    # Your SSH password
           script: |
             cd ~/ai-chat
             git pull origin master
