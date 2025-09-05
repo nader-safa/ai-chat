@@ -13,6 +13,14 @@ const chatSchema = z.object({
   conversationId: z.uuid(),
 })
 
+const bankSMSSchema = z.object({
+  sms: z
+    .string()
+    .trim()
+    .min(40, 'SMS is required')
+    .max(1000, 'SMS must be less than 1000 characters'),
+})
+
 // Public Interface
 export const chatController = {
   sendMessage: async (req: Request, res: Response) => {
@@ -30,6 +38,24 @@ export const chatController = {
       conversationRepository.set(conversationId, response.id)
 
       res.json({ message: response.message })
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to generate a response' })
+    }
+  },
+  sendBankSMS: async (req: Request, res: Response) => {
+    const parseResult = bankSMSSchema.safeParse(req.body)
+
+    if (!parseResult.success) {
+      return res.status(400).json(z.treeifyError(parseResult.error))
+    }
+    try {
+      const { sms } = parseResult.data
+
+      const response = await chatService.sendBankSMS(sms)
+
+      res.json(
+        JSON.parse(response?.message?.choices?.[0]?.message?.content || '{}')
+      )
     } catch (error) {
       res.status(500).json({ error: 'Failed to generate a response' })
     }
