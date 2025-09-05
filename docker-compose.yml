@@ -29,20 +29,20 @@ services:
     networks:
       - ai-chat-network
 
-  postgres:
-    image: postgres:17-alpine
-    container_name: ai-chat-postgres
-    restart: unless-stopped
-    ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_USER: ai-chat-postgres
-      POSTGRES_PASSWORD: ai-chat-postgres
-      POSTGRES_DB: ai-chat
-    networks:
-      - ai-chat-network
-    volumes:
-      - ai-chat-postgres-data:/var/lib/postgresql/data
+  # postgres:
+  #   image: postgres:17-alpine
+  #   container_name: ai-chat-postgres
+  #   restart: unless-stopped
+  #   ports:
+  #     - '5432:5432'
+  #   environment:
+  #     POSTGRES_USER: ai-chat-postgres
+  #     POSTGRES_PASSWORD: ai-chat-postgres
+  #     POSTGRES_DB: ai-chat
+  #   networks:
+  #     - ai-chat-network
+  #   volumes:
+  #     - ai-chat-postgres-data:/var/lib/postgresql/data
 
   nginx:
     image: nginx:alpine
@@ -71,13 +71,13 @@ services:
       - webroot:/var/www/html
     depends_on:
       - nginx
-    command: certonly --webroot --webroot-path=/var/www/html --email nader.safa.dev@gmail.com --non-interactive --keep-until-expiring -d aichat.dishyy.com 
+    command: certonly --webroot --webroot-path=/var/www/html --email nader.safa.dev@gmail.com --non-interactive --keep-until-expiring -d aichat.dishyy.com
 
 networks:
   ai-chat-network:
     driver: bridge
 volumes:
-  ai-chat-postgres-data:
+  # ai-chat-postgres-data:
   webroot:
   certbot-etc:
   certbot-var:
