@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { Button } from './ui/button'
 import { useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
+import ReactMarkdown from 'react-markdown'
 
 type FormData = {
   prompt: string
@@ -71,7 +72,7 @@ const ChatBot = () => {
               message.role === 'assistant' && 'bg-gray-100 self-start'
             )}
           >
-            {message.content}
+            <ReactMarkdown>{message.content}</ReactMarkdown>
           </p>
         ))}
       </div>
