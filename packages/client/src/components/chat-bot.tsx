@@ -5,6 +5,7 @@ import { Button } from './ui/button'
 import { useRef, useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
+import TypingIndicator from './chat/typing-indicator'
 
 type FormData = {
   prompt: string
@@ -104,13 +105,7 @@ const ChatBot = () => {
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </div>
         ))}
-        {isAssistantTyping && (
-          <div className="flex items-center gap-1 px-3 py-3 bg-gray-200 self-start rounded-xl">
-            <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse" />
-            <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.2s]" />
-            <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]" />
-          </div>
-        )}
+        {isAssistantTyping && <TypingIndicator />}
         {error && (
           <div className="flex items-center gap-1 px-3 py-3 bg-red-200 self-start rounded-xl">
             <FaExclamationTriangle className="text-red-800" />
