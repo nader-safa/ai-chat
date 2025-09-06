@@ -13,8 +13,11 @@ RUN bun install
 # Copy the rest of your application code to the container
 COPY . .
 
+# Build the application for production
+RUN bun run build
+
 # Expose the port your app runs on
 EXPOSE 5173
 
-# Command to start your application
-CMD ["bun", "run" ,"dev"]
+# Command to serve the built application
+CMD ["bun", "run", "preview", "--host", "0.0.0.0"]
