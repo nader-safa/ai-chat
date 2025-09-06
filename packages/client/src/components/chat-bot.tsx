@@ -2,7 +2,7 @@ import { FaArrowUp, FaSpinner } from 'react-icons/fa'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import { Button } from './ui/button'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 
@@ -25,11 +25,19 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([])
   const [isAssistantTyping, setIsAssistantTyping] = useState(false)
 
+  const formRef = useRef<HTMLFormElement | null>(null)
+
   const { register, handleSubmit, reset, formState } = useForm<FormData>({
     defaultValues: {
       prompt: '',
     },
   })
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages])
 
   const onSubmit = async ({ prompt }: FormData) => {
     setIsAssistantTyping(true)
@@ -89,6 +97,7 @@ const ChatBot = () => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         onKeyDown={handleKeyDown}
+        ref={formRef}
         className="flex flex-col gap-2 items-end border-2 border-gray-300 rounded-3xl p-4"
       >
         <textarea
