@@ -33,7 +33,7 @@ const ChatInput = ({ onSubmit }: Props) => {
     <form
       onSubmit={handleFormSubmit}
       onKeyDown={handleKeyDown}
-      className="flex flex-col gap-2 items-end border-2 border-gray-300 rounded-3xl p-4"
+      className="flex flex-col gap-2 items-end border-2 border-gray-300 rounded-3xl p-4 relative"
     >
       <textarea
         {...register('prompt', {
@@ -42,11 +42,11 @@ const ChatInput = ({ onSubmit }: Props) => {
         })}
         autoFocus
         placeholder="Ask me anything"
-        className="w-full border-0 focus:outline-none resize-none"
+        className="w-full border-0 focus:outline-none resize-none h-28"
         maxLength={1000}
       />
       <Button
-        className="w-9 h-9 rounded-full"
+        className="w-9 h-9 rounded-full absolute right-4 bottom-4"
         type="submit"
         disabled={formState.isSubmitting || !formState.isValid}
       >
