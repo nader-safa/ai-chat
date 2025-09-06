@@ -1,11 +1,10 @@
-import { FaArrowUp, FaExclamationTriangle, FaSpinner } from 'react-icons/fa'
 import axios from 'axios'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button } from './ui/button'
-import { useRef, useState, useEffect } from 'react'
-import { cn } from '@/lib/utils'
-import ReactMarkdown from 'react-markdown'
+import { FaArrowUp, FaExclamationTriangle, FaSpinner } from 'react-icons/fa'
+import ChatMessages, { type Message } from './chat/chat-messages'
 import TypingIndicator from './chat/typing-indicator'
+import { Button } from './ui/button'
 
 type FormData = {
   prompt: string
@@ -15,11 +14,6 @@ type ChatResponse = {
   message: string
 }
 
-type Message = {
-  role: 'user' | 'assistant'
-  content: string
-}
-
 const ChatBot = () => {
   const conversationId = useRef(crypto.randomUUID())
 
@@ -27,19 +21,11 @@ const ChatBot = () => {
   const [isAssistantTyping, setIsAssistantTyping] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const lastMsgRef = useRef<HTMLDivElement | null>(null)
-
   const { register, handleSubmit, reset, formState } = useForm<FormData>({
     defaultValues: {
       prompt: '',
     },
   })
-
-  useEffect(() => {
-    if (lastMsgRef.current) {
-      lastMsgRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages])
 
   const onSubmit = async ({ prompt }: FormData) => {
     try {
@@ -81,30 +67,10 @@ const ChatBot = () => {
     }
   }
 
-  const onCopyMessage = (e: React.ClipboardEvent<HTMLParagraphElement>) => {
-    const selection = window.getSelection()?.toString().trim()
-    if (selection) {
-      e.preventDefault()
-      e.clipboardData.setData('text/plain', selection)
-    }
-  }
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col gap-2 mb-4 flex-1 overflow-y-auto">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            ref={index === messages.length - 1 ? lastMsgRef : null}
-            onCopy={onCopyMessage}
-            className={cn(
-              'px-4 py-2 rounded-xl',
-              message.role === 'user' && 'bg-blue-600 text-white self-end',
-              message.role === 'assistant' && 'bg-gray-200 self-start'
-            )}
-          >
-            <ReactMarkdown>{message.content}</ReactMarkdown>
-          </div>
-        ))}
+        <ChatMessages messages={messages} />
         {isAssistantTyping && <TypingIndicator />}
         {error && (
           <div className="flex items-center gap-1 px-3 py-3 bg-red-200 self-start rounded-xl">
