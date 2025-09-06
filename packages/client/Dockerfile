@@ -20,4 +20,4 @@ RUN bun run build
 EXPOSE 5173
 
 # Command to serve the built application
-CMD ["bun", "run", "preview", "--host", "0.0.0.0"]
+CMD ["bun", "run", "preview", "--host", "0.0.0.0", "--port", "5173"]
