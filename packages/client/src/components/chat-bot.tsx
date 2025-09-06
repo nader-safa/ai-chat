@@ -25,7 +25,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([])
   const [isAssistantTyping, setIsAssistantTyping] = useState(false)
 
-  const formRef = useRef<HTMLFormElement | null>(null)
+  const lastMsgRef = useRef<HTMLDivElement | null>(null)
 
   const { register, handleSubmit, reset, formState } = useForm<FormData>({
     defaultValues: {
@@ -34,8 +34,8 @@ const ChatBot = () => {
   })
 
   useEffect(() => {
-    if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth' })
+    if (lastMsgRef.current) {
+      lastMsgRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [messages])
 
@@ -79,11 +79,12 @@ const ChatBot = () => {
     }
   }
   return (
-    <div>
-      <div className="flex flex-col gap-2 mb-4">
+    <div className="flex flex-col h-full">
+      <div className="flex flex-col gap-2 mb-4 flex-1 overflow-y-auto">
         {messages.map((message, index) => (
-          <p
+          <div
             key={index}
+            ref={index === messages.length - 1 ? lastMsgRef : null}
             onCopy={onCopyMessage}
             className={cn(
               'px-4 py-2 rounded-xl',
@@ -92,7 +93,7 @@ const ChatBot = () => {
             )}
           >
             <ReactMarkdown>{message.content}</ReactMarkdown>
-          </p>
+          </div>
         ))}
         {isAssistantTyping && (
           <div className="flex items-center gap-1 px-3 py-3 bg-gray-200 self-start rounded-xl">
@@ -105,7 +106,6 @@ const ChatBot = () => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         onKeyDown={handleKeyDown}
-        ref={formRef}
         className="flex flex-col gap-2 items-end border-2 border-gray-300 rounded-3xl p-4"
       >
         <textarea
@@ -113,6 +113,7 @@ const ChatBot = () => {
             required: true,
             validate: value => value.trim().length > 0,
           })}
+          autoFocus
           placeholder="Ask me anything"
           className="w-full border-0 focus:outline-none resize-none"
           maxLength={1000}
