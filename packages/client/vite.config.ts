@@ -5,9 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  server: {
-    allowedHosts: ['aichat.dishyy.com'], // allow external access
-  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
