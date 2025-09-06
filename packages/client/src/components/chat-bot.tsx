@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import { Button } from './ui/button'
 import { useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
 
 type FormData = {
   prompt: string
@@ -12,10 +13,15 @@ type ChatResponse = {
   message: string
 }
 
+type Message = {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 const ChatBot = () => {
   const conversationId = useRef(crypto.randomUUID())
 
-  const [messages, setMessages] = useState<string[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
 
   const { register, handleSubmit, reset, formState } = useForm<FormData>({
     defaultValues: {
@@ -24,14 +30,26 @@ const ChatBot = () => {
   })
 
   const onSubmit = async ({ prompt }: FormData) => {
-    setMessages(prev => [...prev, prompt])
+    setMessages(prev => [
+      ...prev,
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ])
     reset()
     const { data } = await axios.post<ChatResponse>('/api/v1/chat', {
       prompt,
       conversationId: conversationId.current,
     })
 
-    setMessages(prev => [...prev, data.message])
+    setMessages(prev => [
+      ...prev,
+      {
+        role: 'assistant',
+        content: data.message,
+      },
+    ])
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -43,9 +61,18 @@ const ChatBot = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 mb-4">
         {messages.map((message, index) => (
-          <div key={index}>{message}</div>
+          <p
+            key={index}
+            className={cn(
+              'px-4 py-2 rounded-xl',
+              message.role === 'user' && 'bg-blue-600 text-white self-end',
+              message.role === 'assistant' && 'bg-gray-100 self-start'
+            )}
+          >
+            {message.content}
+          </p>
         ))}
       </div>
       <form
