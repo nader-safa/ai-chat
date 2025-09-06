@@ -3,6 +3,7 @@ import { Button } from './components/ui/button'
 
 function App() {
   const [message, setMessage] = useState('')
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
     fetch('/api/v1/health')
@@ -13,8 +14,8 @@ function App() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <p>{message}</p>
-
-      <Button>Click me</Button>
+      <p>the count is {count}</p>
+      <Button onClick={() => setCount(prev => prev + 1)}>Click me</Button>
     </div>
   )
 }
