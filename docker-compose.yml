@@ -1,19 +1,18 @@
 services:
-  # web:
-  #   build:
-  #     context: ./packages/client
-  #     dockerfile: Dockerfile
-  #   container_name: ai-chat-web
-  #   restart: unless-stopped
-  #   ports:
-  #     - '5173:5173'
-  #   environment:
-  #     NODE_ENV: production
-  #     VITE_API_URL: http://ai-chat-api:3000
-  #   networks:
-  #     - ai-chat-network
-  #   depends_on:
-  #     - api
+  web:
+    build:
+      context: ./packages/client
+      dockerfile: Dockerfile
+    container_name: ai-chat-web
+    restart: unless-stopped
+    ports:
+      - '5173:5173'
+    # environment:
+    #   VITE_API_URL: http://ai-chat-api:3000
+    networks:
+      - ai-chat-network
+    depends_on:
+      - api
   api:
     build:
       context: ./packages/server
@@ -58,7 +57,7 @@ services:
       - webroot:/var/www/html
       - certbot-etc:/etc/letsencrypt
     depends_on:
-      # - web
+      - web
       - api
 
   certbot:
