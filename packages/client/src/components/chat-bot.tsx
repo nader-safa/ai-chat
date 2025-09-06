@@ -23,6 +23,7 @@ const ChatBot = () => {
   const conversationId = useRef(crypto.randomUUID())
 
   const [messages, setMessages] = useState<Message[]>([])
+  const [isAssistantTyping, setIsAssistantTyping] = useState(false)
 
   const { register, handleSubmit, reset, formState } = useForm<FormData>({
     defaultValues: {
@@ -31,6 +32,7 @@ const ChatBot = () => {
   })
 
   const onSubmit = async ({ prompt }: FormData) => {
+    setIsAssistantTyping(true)
     setMessages(prev => [
       ...prev,
       {
@@ -51,6 +53,7 @@ const ChatBot = () => {
         content: data.message,
       },
     ])
+    setIsAssistantTyping(false)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -69,12 +72,19 @@ const ChatBot = () => {
             className={cn(
               'px-4 py-2 rounded-xl',
               message.role === 'user' && 'bg-blue-600 text-white self-end',
-              message.role === 'assistant' && 'bg-gray-100 self-start'
+              message.role === 'assistant' && 'bg-gray-200 self-start'
             )}
           >
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </p>
         ))}
+        {isAssistantTyping && (
+          <div className="flex items-center gap-1 px-3 py-3 bg-gray-200 self-start rounded-xl">
+            <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse" />
+            <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.2s]" />
+            <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]" />
+          </div>
+        )}
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
