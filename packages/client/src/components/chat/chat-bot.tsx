@@ -1,14 +1,9 @@
 import axios from 'axios'
 import { useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { FaArrowUp, FaExclamationTriangle, FaSpinner } from 'react-icons/fa'
-import ChatMessages, { type Message } from './chat/chat-messages'
-import TypingIndicator from './chat/typing-indicator'
-import { Button } from './ui/button'
-
-type FormData = {
-  prompt: string
-}
+import { FaExclamationTriangle } from 'react-icons/fa'
+import ChatMessages, { type Message } from './chat-messages'
+import TypingIndicator from './typing-indicator'
+import ChatInput, { type ChatFormData } from './chat-input'
 
 type ChatResponse = {
   message: string
@@ -21,13 +16,7 @@ const ChatBot = () => {
   const [isAssistantTyping, setIsAssistantTyping] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { register, handleSubmit, reset, formState } = useForm<FormData>({
-    defaultValues: {
-      prompt: '',
-    },
-  })
-
-  const onSubmit = async ({ prompt }: FormData) => {
+  const onSubmit = async ({ prompt }: ChatFormData) => {
     try {
       setError(null)
 
@@ -39,7 +28,6 @@ const ChatBot = () => {
           content: prompt,
         },
       ])
-      reset()
       const { data } = await axios.post<ChatResponse>('/api/v1/chat', {
         prompt,
         conversationId: conversationId.current,
@@ -60,13 +48,6 @@ const ChatBot = () => {
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit(onSubmit)()
-    }
-  }
-
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col gap-2 mb-4 flex-1 overflow-y-auto">
@@ -79,33 +60,7 @@ const ChatBot = () => {
           </div>
         )}
       </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        onKeyDown={handleKeyDown}
-        className="flex flex-col gap-2 items-end border-2 border-gray-300 rounded-3xl p-4"
-      >
-        <textarea
-          {...register('prompt', {
-            required: true,
-            validate: value => value.trim().length > 0,
-          })}
-          autoFocus
-          placeholder="Ask me anything"
-          className="w-full border-0 focus:outline-none resize-none"
-          maxLength={1000}
-        />
-        <Button
-          className="w-9 h-9 rounded-full"
-          type="submit"
-          disabled={formState.isSubmitting || !formState.isValid}
-        >
-          {formState.isSubmitting ? (
-            <FaSpinner className="animate-spin" />
-          ) : (
-            <FaArrowUp />
-          )}
-        </Button>
-      </form>
+      <ChatInput onSubmit={onSubmit} />
     </div>
   )
 }
