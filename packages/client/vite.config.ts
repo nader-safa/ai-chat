@@ -11,6 +11,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  preview: {
+    allowedHosts: ['aichat.dishyy.com'],
+  },
   // server: {
   //   proxy: {
   //     '/api': process.env.VITE_API_URL || 'http://localhost:3000',
