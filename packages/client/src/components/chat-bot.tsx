@@ -1,4 +1,4 @@
-import { FaArrowUp, FaSpinner } from 'react-icons/fa'
+import { FaArrowUp, FaExclamationTriangle, FaSpinner } from 'react-icons/fa'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import { Button } from './ui/button'
@@ -24,6 +24,7 @@ const ChatBot = () => {
 
   const [messages, setMessages] = useState<Message[]>([])
   const [isAssistantTyping, setIsAssistantTyping] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const lastMsgRef = useRef<HTMLDivElement | null>(null)
 
@@ -40,28 +41,36 @@ const ChatBot = () => {
   }, [messages])
 
   const onSubmit = async ({ prompt }: FormData) => {
-    setIsAssistantTyping(true)
-    setMessages(prev => [
-      ...prev,
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ])
-    reset()
-    const { data } = await axios.post<ChatResponse>('/api/v1/chat', {
-      prompt,
-      conversationId: conversationId.current,
-    })
+    try {
+      setError(null)
 
-    setMessages(prev => [
-      ...prev,
-      {
-        role: 'assistant',
-        content: data.message,
-      },
-    ])
-    setIsAssistantTyping(false)
+      setIsAssistantTyping(true)
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ])
+      reset()
+      const { data } = await axios.post<ChatResponse>('/api/v1/chat', {
+        prompt,
+        conversationId: conversationId.current,
+      })
+
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: data.message,
+        },
+      ])
+    } catch (error) {
+      console.error(error)
+      setError('Something went wrong, try again later')
+    } finally {
+      setIsAssistantTyping(false)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -100,6 +109,12 @@ const ChatBot = () => {
             <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse" />
             <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.2s]" />
             <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]" />
+          </div>
+        )}
+        {error && (
+          <div className="flex items-center gap-1 px-3 py-3 bg-red-200 self-start rounded-xl">
+            <FaExclamationTriangle className="text-red-800" />
+            <p className="text-red-800">{error}</p>
           </div>
         )}
       </div>
